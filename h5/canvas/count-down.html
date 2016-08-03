@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    	html,body{
+    		height: 100%;
+    		width: 100%;
+    	}
+    	#canvas{
+    		height:100%;
+    		width: 100%;
+    	}
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas">
+        当前浏览器不支持Canvas，请更换浏览器再试
+    </canvas>
+    <script type="text/javascript" src="digit.js"></script>
+    <script type="text/javascript">
+    var endTime = new Date();
+    endTime.setTime(endTime.getTime()+3600*1000);
+
+    var curShowTimeSeconds = getCurShowTimeSeconds();
+
+    var balls = [];
+    var colors = ['#33b5e5', '#0099cc', '#aa66cc', '#9933cc', '#99cc00', '#669900', '#ffbb33', '#ff8800', '#ff4444', '#cc0000'];
+
+    window.onload = function() {
+
+        WINDOW_WIDTH = document.body.clientWidth;
+        WINDOW_HEIGHT = document.body.clientHeight;
+        console.log(WINDOW_HEIGHT);
+        RADUIS = Math.round(WINDOW_WIDTH * 4 / 5 / 108) - 1;
+        MARGIN_TOP = Math.round(WINDOW_HEIGHT / 5);
+        MARGIN_LEFT = Math.round(WINDOW_WIDTH / 10);
+
+        var canvas = document.getElementById('canvas');
+        canvas.width = WINDOW_WIDTH;
+        canvas.height = WINDOW_HEIGHT;
+        var ctx = canvas.getContext('2d');
+
+        setInterval(function() {
+            render(ctx);
+            update();
+        }, 50)
+
+
+    }
+
+    function render(ctx) {
+
+        ctx.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        var hour = parseInt(curShowTimeSeconds / 3600),
+            min = parseInt((curShowTimeSeconds - hour * 3600) / 60),
+            second = curShowTimeSeconds % 60;
+
+        renderDigit(MARGIN_LEFT, MARGIN_TOP, parseInt(hour / 10), ctx);
+        renderDigit(MARGIN_LEFT + 15 * (RADUIS + 1), MARGIN_TOP, parseInt(hour % 10), ctx);
+        renderDigit(MARGIN_LEFT + 30 * (RADUIS + 1), MARGIN_TOP, 10, ctx);
+
+        renderDigit(MARGIN_LEFT + 38 * (RADUIS + 1), MARGIN_TOP, parseInt(min / 10), ctx);
+        renderDigit(MARGIN_LEFT + 53 * (RADUIS + 1), MARGIN_TOP, parseInt(min % 10), ctx);
+        renderDigit(MARGIN_LEFT + 68 * (RADUIS + 1), MARGIN_TOP, 10, ctx);
+
+        renderDigit(MARGIN_LEFT + 76 * (RADUIS + 1), MARGIN_TOP, parseInt(second / 10), ctx);
+        renderDigit(MARGIN_LEFT + 91 * (RADUIS + 1), MARGIN_TOP, parseInt(second % 10), ctx);
+
+        for (var i = 0; i < balls.length; i++) {
+            ctx.fillStyle = balls[i].color;
+            ctx.beginPath();
+            ctx.arc(balls[i].x, balls[i].y, RADUIS, 0, 2 * Math.PI, true);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+    }
+
+    function renderDigit(x, y, num, ctx) {
+
+        ctx.fillStyle = 'rgb(0,102,153)';
+        var digitNum = digit[num];
+        for (var i = 0; i < digitNum.length; i++) {
+            for (var j = 0; j < digitNum[i].length; j++) {
+                if (digitNum[i][j] === 1) {
+
+                    ctx.beginPath();
+                    ctx.arc(x + j * 2 * (RADUIS + 1) + RADUIS + 1, y + i * 2 * (RADUIS + 1) + RADUIS + 1, RADUIS, 0, 2 * Math.PI);
+                    ctx.closePath();
+
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    function getCurShowTimeSeconds() {
+        var curTime = new Date();
+        var ret = endTime.getTime() - curTime.getTime();
+
+        ret = Math.round(ret / 1000);
+
+        return ret >= 0 ? ret : 0;
+    }
+
+    function update() {
+        var nextShowTimeSeconds = getCurShowTimeSeconds();
+
+        var nextHours = parseInt(nextShowTimeSeconds / 3600);
+        var nextMinutes = parseInt((nextShowTimeSeconds - nextHours * 3600) / 60);
+        var nextSeconds = nextShowTimeSeconds % 60;
+
+        var curHours = parseInt(curShowTimeSeconds / 3600);
+        var curMinutes = parseInt((curShowTimeSeconds - nextHours * 3600) / 60);
+        var curSeconds = curShowTimeSeconds % 60;
+
+        if (nextSeconds != curSeconds) {
+
+            if (parseInt(curHours / 10) != parseInt(nextHours / 10)) {
+                addBalls(MARGIN_LEFT, MARGIN_TOP, parseInt(curHours / 10))
+            }
+            if (parseInt(curHours % 10) != parseInt(nextHours % 10)) {
+                addBalls(MARGIN_LEFT + 15 * (RADUIS + 1), MARGIN_TOP, parseInt(nextHours % 10))
+            }
+            if (parseInt(curMinutes / 10) != parseInt(nextMinutes / 10)) {
+                addBalls(MARGIN_LEFT + 38 * (RADUIS + 1), MARGIN_TOP, parseInt(nextMinutes / 10))
+            }
+            if (parseInt(curMinutes % 10) != parseInt(nextMinutes % 10)) {
+                addBalls(MARGIN_LEFT + 53 * (RADUIS + 1), MARGIN_TOP, parseInt(nextMinutes % 10))
+            }
+            if (parseInt(curSeconds / 10) != parseInt(nextSeconds / 10)) {
+                addBalls(MARGIN_LEFT + 76 * (RADUIS + 1), MARGIN_TOP, parseInt(nextSeconds / 10))
+            }
+            if (parseInt(curSeconds % 10) != parseInt(nextSeconds % 10)) {
+                addBalls(MARGIN_LEFT + 91 * (RADUIS + 1), MARGIN_TOP, parseInt(nextSeconds % 10))
+            }
+
+            curShowTimeSeconds = nextShowTimeSeconds;
+
+        }
+
+        updateBalls();
+
+    }
+
+    function addBalls(x, y, num) {
+        var digitNum = digit[num];
+
+        for (var i = 0; i < digitNum.length; i++) {
+            for (var j = 0; j < digitNum[i].length; j++) {
+                if (digitNum[i][j] == 1) {
+                    var aBall = {
+                        x: x + j * 2 * (RADUIS + 1) + (RADUIS + 1),
+                        y: y + i * 2 * (RADUIS + 1) + (RADUIS + 1),
+                        g: 1.5 + Math.random(),
+                        vx: Math.pow(-1, Math.ceil(Math.random() * 1000)) * 4,
+                        vy: -5,
+                        color: colors[Math.floor(Math.random() * colors.length)]
+                    }
+                    balls.push(aBall);
+                }
+            }
+        }
+    }
+
+    function updateBalls() {
+
+        for (var i = 0; i < balls.length; i++) {
+            var ball = balls[i];
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+            ball.vy += ball.g;
+            if (ball.y > WINDOW_HEIGHT - RADUIS) {
+                ball.y = WINDOW_HEIGHT - RADUIS
+                ball.vy = -ball.vy * .75
+            }
+        }
+        var cnt = 0;
+        for (var i = 0; i < balls.length; i++) {
+            if (balls[i].x + RADUIS > 0 && balls[i].x - RADUIS < WINDOW_WIDTH) {
+                balls[cnt++] = balls[i];
+            }
+        }
+
+        while (balls.length > cnt) {
+            balls.pop();
+        }
+
+    }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		canvas{
+			border:1px solid #aaa;
+			position: absolute;
+			top:50%;
+			left: 50%;
+			margin-left:-200px;
+			margin-top: -200px; 
+		}
+
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<script type="text/javascript">
+		
+		var W=400,
+			H=400,
+			R=10;
+
+		var ball={
+			x:200,
+			y:200,
+			r:10,
+			vx:0,
+			vy:-4,
+			g:2,
+			topEdge:250,
+			bottomEdge:300
+		}
+		window.onload=function(){
+
+			var canvas=document.getElementById('canvas');
+
+			canvas.width=W;
+			canvas.height=H;
+
+			var ctx=canvas.getContext('2d');
+
+			setInterval(function(){
+				draw(ctx);
+				update();
+			},50)
+
+		}
+		function draw(ctx){
+			ctx.clearRect(0,0,W,H);
+			ctx.fillStyle='rgb(0,102,153)'
+			ctx.beginPath();
+			ctx.arc(ball.x,ball.y,ball.r,0,2*Math.PI);
+			ctx.closePath();
+			ctx.fill();
+		}
+
+		function update(){
+			ball.y+=ball.vy;
+			ball.vy+=2;
+
+			if(ball.y<=ball.topEdge+ball.r){
+				ball.y=ball.topEdge+ball.r;
+				ball.vy=-ball.vy;
+			}
+			if(ball.y>=ball.bottomEdge-ball.r){
+				ball.y=ball.bottomEdge-ball.r;
+				ball.vy=-ball.vy;
+			}
+		}
+
+	</script>
+</body>
+</html>

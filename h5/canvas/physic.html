@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" style="border:1px solid #aaa"> </canvas>
+    <script type="text/javascript">
+    var ball = {
+        x: 268,
+        y: 100,
+        r: 8,
+        g: 1,
+        vx: -4,
+        vy: -10,
+        color: "#005588"
+    }
+    window.onload = function() {
+
+        var canvas = document.getElementById('canvas');
+
+        canvas.height = 500;
+        canvas.width = 500;
+
+        var ctx = canvas.getContext('2d');
+
+        setInterval(function() {
+            render(ctx);
+            update();
+        }, 50)
+
+    }
+
+    function update() {
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        ball.vy += ball.g;
+
+        //下边缘
+        if (ball.y >= 500 - ball.r) {
+            ball.y =500 - ball.r
+            ball.vy = -ball.vy*0.5;
+        }
+        //上边缘
+        if(ball.y<=ball.r){
+        	ball.y=ball.r;
+        	ball.vy = -ball.vy;
+        }
+        //左边缘
+        if(ball.x<=ball.r){
+        	ball.x=ball.r;
+        	ball.vx=-ball.vx;
+        }
+        //右边缘
+        if(ball.x>500-ball.r){
+        	ball.x=500-ball.r;
+        	ball.vx=-ball.vx;
+        }
+    }
+
+    function render(ctx) {
+
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.fillStyle = ball.color;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
+    }
+    </script>
+</body>
+
+</html>
