@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>饼状图</title>
+	<style type="text/css">
+		/* .pie {
+			width: 100px;
+			height: 100px;
+			border-radius: 50%;
+			background-color: yellowgreen;
+			background-image: linear-gradient(to right, transparent 50%, #655 0);
+		}
+		@keyframes spin {
+			to { transform: rotate(.5turn) }
+		}
+		@keyframes bg {
+			50% {background-color: #655;}
+		}
+		.pie::before {
+			content: "";
+			display: block;
+			margin-left: 50%;
+			height: 100%;
+			border-radius: 0 100% 100% 0 / 50%;
+			background-color: inherit;
+			transform-origin: 0 50%;
+			-webkit-transform: rotate(.1turn);
+			   -moz-transform: rotate(.1turn);
+			    -ms-transform: rotate(.1turn);
+			     -o-transform: rotate(.1turn);
+			        transform: rotate(.1turn);
+			-webkit-animation: spin 3s linear infinite,bg 6s step-end infinite;
+			-o-animation: spin 3s linear infinite,bg 6s step-end infinite;
+			animation: spin 3s linear infinite,bg 6s step-end infinite;
+		} */
+		
+		svg {
+			width: 100px;
+			height: 100px;
+			transform: rotate(-90deg);
+			border-radius: 50%;
+			background-color: yellowgreen;
+		}
+		@keyframes fillup {
+			to { stroke-dasharray: 100 100; }
+		}
+		circle {
+			fill: yellowgreen;
+			stroke: #655;
+			stroke-width: 32;
+			stroke-dasharray: 0 100;
+			animation: fillup 5s linear infinite;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div class="pie">20%</div>
+	<div class="pie">60%</div>
+	
+	<script type="text/javascript">
+	  //饼状图逻辑代码
+	  var pies = document.getElementsByClassName('pie');
+	  for(var i = 0; i < pies.length; i++) {
+	  	var pie = pies[i];
+	  	var p = parseFloat(pie.textContent);
+	  	var NS = "http://www.w3.org/2000/svg";
+	  	var svg = document.createElementNS(NS, "svg");
+	  	var circle = document.createElementNS(NS, "circle");
+	  	var title = document.createElementNS(NS, "title");
+
+	  	circle.setAttribute('r', 16);
+	  	circle.setAttribute('cx', 16);
+	  	circle.setAttribute('cy', 16);
+	  	circle.setAttribute('stroke-dasharray', p + " 100");
+
+	  	svg.setAttribute("viewBox", "0 0 32 32");
+	  	title.textContent = pie.textContent;
+	  	svg.appendChild(title);
+	  	svg.appendChild(circle);
+	  	pie.appendChild(svg);
+
+	  }
+	</script>
+</body>
+</html>
